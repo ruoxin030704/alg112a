@@ -1,40 +1,42 @@
-#參考hw6程式，chatgpt
-
+#了解過內容還是不太理解，複製chatGPT
 import numpy as np
-from micrograd import Value, grad
+from micrograd.engine import Value
 
-# 定義可微運算子
-def f(x):
-    return x[0]**2 + x[1]**2 + x[2]**2
+def df(f, p, k, step=0.01):
+    """計算函數 f 對變數 p[k] 的偏微分"""
+    p1 = [Value(px) for px in p]
+    p1[k] = p[k] + step
+    return (f(p1) - f(p)) / step
 
-# 初始解
-initial_solution = [2.0, 1.0, 3.0]
+def grad(f, p, step=0.01):
+    """計算函數 f 在點 p 上的梯度"""
+    gp = [df(f, p, k, step) for k in range(len(p))]
+    return gp
 
-# 使用 micrograd 的 grad 函數計算梯度
-def compute_gradient(x):
-    x = [Value(v) for v in x]  # 將變數轉換為可微型
-    y = f(x)  # 計算目標函數
-    y.backward()  # 執行反向傳播
-    return np.array([v.grad for v in x])  # 取得梯度值
+def gradientDescent(f, initial_point, learning_rate=0.1, tolerance=1e-5, max_iter=1000):
+    """使用梯度下降法找到向量函數的谷底"""
+    p = [Value(px) for px in initial_point]
+    for i in range(max_iter):
+        gradient = grad(f, p)
+        p = [px - learning_rate * gx for px, gx in zip(p, gradient)]  # 更新參數
+        if sum(gx.data ** 2 for gx in gradient) ** 0.5 < tolerance:
+            print(f"Converged after {i+1} iterations.")
+            break
+    else:
+        print("Did not converge within the maximum number of iterations.")
 
-# 使用梯度下降法進行優化
-learning_rate = 0.01
-max_iterations = 1000
-tolerance = 1e-6
+    return [px.data for px in p], f(p).data
 
-current_solution = initial_solution.copy()
+# 舉例使用的目標函數
+def example_function(p):
+    return p[0]**2 + p[1]**2 + p[2]**2
 
-for iteration in range(max_iterations):
-    current_value = f(current_solution)
-    gradient = compute_gradient(current_solution)
+# 設定初始點
+initial_point = np.array([1.0, 2.0, 3.0])
 
-    if np.linalg.norm(gradient) < tolerance:
-        break  # 梯度足夠小，視為已收斂
+# 使用梯度下降法找到谷底
+result = gradientDescent(example_function, initial_point)
 
-    current_solution = current_solution - learning_rate * gradient
-
-final_solution = np.array([v.item() for v in current_solution])
-
-# 輸出結果
-print("最終解：", final_solution)
-print("最終值：", f(current_solution).item())
+# 印出結果
+print("Optimal solution:", result[0])
+print("Optimal value:", result[1])
