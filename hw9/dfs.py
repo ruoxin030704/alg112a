@@ -1,3 +1,4 @@
+#複製chatGPT程式碼，稍微了解但有點不懂
 def dfs(maze, start, end):
     def is_valid(x, y):
         return 0 <= x < len(maze) and 0 <= y < len(maze[0]) and maze[x][y] == 0

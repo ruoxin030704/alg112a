@@ -6,3 +6,5 @@ def power_2n_method1(n):
 n = int(input("請輸入指數 n："))
 result = power_2n_method1(n)
 print(f"2^{n} 等於 {result}")
+
+#修改chatGPT程式碼

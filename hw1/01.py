@@ -8,3 +8,5 @@ def fibonacci(n):
 n = int(input("請輸入費氏數列的項數："))
 result = fibonacci(n)
 print(f"前 {n} 項費氏數列為：{result}")
+
+#修改chatGPT程式碼

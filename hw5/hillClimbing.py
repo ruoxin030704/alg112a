@@ -1,4 +1,4 @@
-#寫改老師上課範例
+#修改老師上課範例
 import random
 
 def hillClimbing(f, p, h=0.01):
